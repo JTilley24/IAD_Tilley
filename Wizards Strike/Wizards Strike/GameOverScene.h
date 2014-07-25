@@ -9,8 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "cocos2d.h"
 #import "cocos2d-ui.h"
+#import <Parse/Parse.h>
 
-@interface GameOverScene : CCScene {
+@interface GameOverScene : CCScene <CCTableViewDataSource> {
     
 }
 @property (nonatomic, strong)NSString *score;

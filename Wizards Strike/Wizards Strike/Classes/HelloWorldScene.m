@@ -26,6 +26,7 @@
     BOOL *scheduledAction;
     float fontSize;
     int lives;
+    NSString *difficultyString;
     NSMutableArray *livesArray;
     int count;
     int score;
@@ -92,6 +93,16 @@
     
     [self addChild:spriteSheet];
 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"Difficulty"] != nil){
+        difficultyString = [defaults objectForKey:@"Difficulty"];
+    }else{
+        difficultyString = @"Easy";
+        [defaults setObject:difficultyString forKey:@"Difficulty"];
+        [defaults synchronize];
+    }
+
+    
     // Create Background Image
     CCSprite *background = [CCSprite spriteWithImageNamed:backImage];
     background.position = ccp(self.contentSize.width/2, self.contentSize.height/2);
@@ -191,7 +202,11 @@
     bonusRound = false;
     //Set Multiplier and Points
     multiplier = 1;
-    point = 75;
+    if([difficultyString isEqualToString:@"Hard"]){
+        point = 125;
+    }else{
+        point = 75;
+    }
     
     // done
 	return self;
@@ -214,9 +229,13 @@
     [super onEnter];
     //Set Timers for Adding Gems and Pumpkins
     if(!scheduledAction){
-        [self schedule:@selector(addGems) interval:2.0f];
-        [self schedule:@selector(addPumpkin) interval:6.25f];
-    }
+        if([difficultyString isEqualToString:@"Hard"]){
+            [self schedule:@selector(addGems) interval:1.5f];
+            [self schedule:@selector(addPumpkin) interval:4.25f];
+        }else
+            [self schedule:@selector(addGems) interval:2.5f];
+        [self schedule:@selector(addPumpkin) interval:6.35f];
+        }
     // In pre-v3, touch enable and scheduleUpdate was called here
     // In v3, touch is enabled by setting userInterActionEnabled for the individual nodes
     // Per frame update is automatically enabled, if update is overridden
@@ -409,8 +428,8 @@
     [livesArray removeLastObject];
     
     //End Game
-    if(lives == 0){
-        [[CCDirector sharedDirector] replaceScene:[GameOverScene scene:@"lose" withScore:[NSString stringWithFormat:@"Score: %d", score]]];
+    if(lives == 3){
+        [[CCDirector sharedDirector] replaceScene:[GameOverScene scene:@"lose" withScore:[NSString stringWithFormat:@"%d", score]]];
     }
 }
 

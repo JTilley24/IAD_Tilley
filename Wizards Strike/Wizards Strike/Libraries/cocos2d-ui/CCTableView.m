@@ -53,12 +53,18 @@
 
 - (void) setPosition:(CGPoint)position
 {
+    BOOL moved;
+    if(self.parent.position.x == position.x){
+        moved = YES;
+    }
     [super setPosition:position];
     
     CCTableView* tableView = (CCTableView*)self.parent;
-    [tableView markVisibleRowsDirty];
-    [tableView updateVisibleRows];
-}
+    if(moved){
+         [tableView markVisibleRowsDirty];
+        [tableView updateVisibleRows];
+    }
+   }
 
 @end
 

@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "IntroScene.h"
 #import "HelloWorldScene.h"
+#import <Parse/Parse.h>
 
 @implementation AppDelegate
 
@@ -18,14 +19,15 @@
 {
 	// This is the only app delegate method you need to implement when inheriting from CCAppDelegate.
 	// This method is a good place to add one time setup code that only runs when your app is first launched.
-	
+	[Parse setApplicationId:@"QXZIvaVpYflb9oRwNISMGHVdBMp1eTZH7nHRf1co"
+                  clientKey:@"QRe3srfRMiwTNmT0779C1l92UbceFdAJ1z5ar5nq"];
 	// Setup Cocos2D with reasonable defaults for everything.
 	// There are a number of simple options you can change.
 	// If you want more flexibility, you can configure Cocos2D yourself instead of calling setupCocos2dWithOptions:.
 	[self setupCocos2dWithOptions:@{
 		// Show the FPS and draw call label.
 		CCSetupShowDebugStats: @(YES),
-		
+		CCSetupDepthFormat: @GL_DEPTH24_STENCIL8_OES,
 		// More examples of options you might want to fiddle with:
 		// (See CCAppDelegate.h for more information)
 		

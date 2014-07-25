@@ -13,6 +13,7 @@
 #import "CCAnimation.h"
 #import "CreditsScene.h"
 #import "InstructScene.h"
+#import "SettingsScene.h"
 // -----------------------------------------------------------------------
 #pragma mark - IntroScene
 // -----------------------------------------------------------------------
@@ -26,8 +27,10 @@
     CCSprite *mainHit;
     CCActionAnimate *mainHitAction;
     CCButton *startButton;
-    CCButton *creditsButton;
-    CCButton *instructButton;
+    CCButton *difficultyButton;
+    CCButton *settingButton;
+    float fontSize;
+    NSString *difficultyString;
 }
 // -----------------------------------------------------------------------
 #pragma mark - Create & Destroy
@@ -53,16 +56,29 @@
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"sprite_sheet@2x.plist"];
         mainSprites = [CCSpriteBatchNode batchNodeWithFile:@"menu_sprites@2x.png"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"menu_sprites@2x.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"settings_sheet@2x.plist"];
         backImage = @"back@2x.png";
+        fontSize = 18.0f;
     }else{
         spriteSheet = [CCSpriteBatchNode batchNodeWithFile:@"sprite_sheet.png"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"sprite_sheet.plist"];
         mainSprites = [CCSpriteBatchNode batchNodeWithFile:@"menu_sprites.png"];
         [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"menu_sprites.plist"];
+        [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile:@"settings_sheet.plist"];
         backImage = @"back.png";
+        fontSize = 10.0f;
     }
     [self addChild:spriteSheet];
     [self addChild:mainSprites];
+    
+    //Set Defaults
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([defaults objectForKey:@"Difficulty"] != nil)
+    {
+        difficultyString = [defaults objectForKey:@"Difficulty"];
+    }else{
+      difficultyString = @"Easy";
+    }
     
     //Preload Soundfx
     [[OALSimpleAudio sharedInstance] preloadEffect:@"poofSFX.mp3"];
@@ -85,25 +101,31 @@
     [self addChild:cauldronLG];
     
     //Create the Start Button
-    startButton = [CCButton buttonWithTitle:@"" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"start-button.png"]];
+    startButton = [CCButton buttonWithTitle:@"Start Game" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button-bg.png"]];
+    startButton.label.fontSize = fontSize * 2.5;
+    startButton.preferredSize = CGSizeMake(startButton.contentSize.width * 1.25, startButton.contentSize.height);
     startButton.position = ccp(self.contentSize.width/2, -startButton.contentSize.height);
     startButton.opacity = 0.0f;
     startButton.cascadeOpacityEnabled = YES;
     [self addChild:startButton];
     
-    //Create the Credits Button
-    creditsButton = [CCButton buttonWithTitle:@"" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"credits-button.png"]];
-    creditsButton.position = ccp(self.contentSize.width/2, -creditsButton.contentSize.height);
-    creditsButton.opacity = 0.0f;
-    creditsButton.cascadeOpacityEnabled = YES;
-    [self addChild:creditsButton];
+    //Create the Difficulty Button
+    difficultyButton = [CCButton buttonWithTitle:[[NSString alloc] initWithFormat:@"Difficulty: %@", difficultyString ] spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button-bg.png"]];
+    difficultyButton.label.fontSize = fontSize * 2.5;
+    difficultyButton.preferredSize = CGSizeMake(difficultyButton.contentSize.width * 1.25, difficultyButton.contentSize.height);
+    difficultyButton.position = ccp(self.contentSize.width/2, -difficultyButton.contentSize.height);
+    difficultyButton.opacity = 0.0f;
+    difficultyButton.cascadeOpacityEnabled = YES;
+    [self addChild:difficultyButton];
     
-    //Create the Instructions Button
-    instructButton = [CCButton buttonWithTitle:@"" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"instruct-button.png"]];
-    instructButton.position = ccp(self.contentSize.width/2, -instructButton.contentSize.height);
-    instructButton.opacity = 0.0f;
-    instructButton.cascadeOpacityEnabled = YES;
-    [self addChild:instructButton];
+    //Create the Settings Button
+    settingButton = [CCButton buttonWithTitle:@"Settings" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button-bg.png"]];
+    settingButton.label.fontSize = fontSize * 2.5;
+    settingButton.preferredSize = CGSizeMake(settingButton.contentSize.width * 1.25, settingButton.contentSize.height);
+    settingButton.position = ccp(self.contentSize.width/2, -settingButton.contentSize.height);
+    settingButton.opacity = 0.0f;
+    settingButton.cascadeOpacityEnabled = YES;
+    [self addChild:settingButton];
     
     //Create Animation for the Hit in Cauldron
     NSMutableArray *mainHitFrames = [NSMutableArray array];
@@ -143,37 +165,37 @@
     CCActionDelay *delayStart = [CCActionDelay actionWithDuration:1.0f];
     CCActionSequence *startSequence = [CCActionSequence actionWithArray:@[delayStart, mainStartAction]];
     
-    //Action to Move and Fade Credits Button
-    CCActionCallBlock *mainCreditAction = [CCActionCallBlock actionWithBlock:^{
-        CCActionMoveTo *creditMove = [CCActionMoveTo actionWithDuration:1.5f position:CGPointMake(self.contentSize.width/2, self.contentSize.height/2 - creditsButton.contentSize.height/2)];
-        CCActionFadeIn *creditFade = [CCActionFadeTo actionWithDuration:2.0f opacity:1.0f];
-        [creditsButton runAction:creditMove];
-        [creditsButton runAction:creditFade];
+    //Action to Move and Fade Difficulty Button
+    CCActionCallBlock *mainDifficultyAction = [CCActionCallBlock actionWithBlock:^{
+        CCActionMoveTo *difficultyMove = [CCActionMoveTo actionWithDuration:1.5f position:CGPointMake(self.contentSize.width/2, self.contentSize.height/2 - difficultyButton.contentSize.height/2)];
+        CCActionFadeIn *difficultyFade = [CCActionFadeTo actionWithDuration:2.0f opacity:1.0f];
+        [difficultyButton runAction:difficultyMove];
+        [difficultyButton runAction:difficultyFade];
     }];
-    CCActionDelay *delayCredit = [CCActionDelay actionWithDuration:1.5f];
-    CCActionSequence *creditSequence = [CCActionSequence actionWithArray:@[delayCredit, mainCreditAction]];
+    CCActionDelay *delayDifficulty = [CCActionDelay actionWithDuration:1.5f];
+    CCActionSequence *difficultySequence = [CCActionSequence actionWithArray:@[delayDifficulty, mainDifficultyAction]];
     
-    //Action to Move and Fade Instructions Button
-    CCActionCallBlock *mainInstructAction = [CCActionCallBlock actionWithBlock:^{
-        CCActionMoveTo *instructMove = [CCActionMoveTo actionWithDuration:1.5f position:CGPointMake(self.contentSize.width/2, self.contentSize.height/2 - instructButton.contentSize.height * 2)];
-        CCActionFadeIn *instructFade = [CCActionFadeTo actionWithDuration:2.0f opacity:1.0f];
-        [instructButton runAction:instructMove];
-        [instructButton runAction:instructFade];
+    //Action to Move and Fade Settings Button
+    CCActionCallBlock *mainSettingsAction = [CCActionCallBlock actionWithBlock:^{
+        CCActionMoveTo *settingsMove = [CCActionMoveTo actionWithDuration:1.5f position:CGPointMake(self.contentSize.width/2, self.contentSize.height/2 - settingButton.contentSize.height * 2)];
+        CCActionFadeIn *settingsFade = [CCActionFadeTo actionWithDuration:2.0f opacity:1.0f];
+        [settingButton runAction:settingsMove];
+        [settingButton runAction:settingsFade];
     }];
-    CCActionDelay *delayInstruct = [CCActionDelay actionWithDuration:2.0f];
-    CCActionSequence *instructSequence = [CCActionSequence actionWithArray:@[delayInstruct, mainInstructAction]];
+    CCActionDelay *delaySettings = [CCActionDelay actionWithDuration:2.0f];
+    CCActionSequence *settingsSequence = [CCActionSequence actionWithArray:@[delaySettings, mainSettingsAction]];
     
     //Run Actions for UI Elements
     [mainHit runAction:mainHitAction];
     [titleSprite runAction:titleSequence];
     [startButton runAction:startSequence];
-    [creditsButton runAction:creditSequence];
-    [instructButton runAction:instructSequence];
+    [difficultyButton runAction:difficultySequence];
+    [settingButton runAction:settingsSequence];
     
     //Set Targets for Button Methods
     [startButton setTarget:self selector:@selector(onStartClicked:)];
-    [creditsButton setTarget:self selector:@selector(onCreditsClicked:)];
-    [instructButton setTarget:self selector:@selector(onInstructClicked:)];
+    [difficultyButton setTarget:self selector:@selector(onDifficultyClicked:)];
+    [settingButton setTarget:self selector:@selector(onSettingsClicked:)];
   
     // done
 	return self;
@@ -189,16 +211,28 @@
     [[CCDirector sharedDirector] pushScene:[HelloWorldScene scene]
                                withTransition:[CCTransition transitionPushWithDirection:CCTransitionDirectionLeft duration:1.0f]];
 }
-//Go to Credits Scene
--(void)onCreditsClicked:(id)sender
+//Change Difficulty
+-(void)onDifficultyClicked:(id)sender
 {
-    [[CCDirector sharedDirector] pushScene:[CreditsScene scene] withTransition:[CCTransition transitionPushWithDirection:CCTransitionDirectionLeft duration:1.0f]];
-}
-//Go to Instructions Scene
--(void)onInstructClicked:(id)sender
-{
-    [[CCDirector sharedDirector] pushScene:[InstructScene scene] withTransition:[CCTransition transitionPushWithDirection:CCTransitionDirectionLeft duration:1.0f]];
-}
+    if([difficultyString isEqualToString:@"Easy"]){
+        difficultyString = @"Hard";
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@"Hard" forKey:@"Difficulty"];
+        [defaults synchronize];
+    }else if ([difficultyString isEqualToString:@"Hard"]){
+        difficultyString = @"Easy";
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@"Easy" forKey:@"Difficulty"];
+        [defaults synchronize];
+    }
+    [difficultyButton.label setString:[NSString stringWithFormat:@"Difficulty: %@", difficultyString]];
 
+}
+//Go to Settings Scene
+-(void)onSettingsClicked:(id)sender
+{
+    CCScene *settingScene = [SettingsScene scene];
+    [[CCDirector sharedDirector] pushScene:settingScene];
+}
 // -----------------------------------------------------------------------
 @end
