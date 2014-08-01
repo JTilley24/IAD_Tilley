@@ -1,7 +1,6 @@
 //
 //  SettingsScene.m
 //  Wizards Strike
-//  Wizards Strike
 //  MGD Term 1406
 //  Created by Justin Tilley on 7/21/14.
 //  Copyright 2014 Justin Tilley. All rights reserved.
@@ -10,6 +9,7 @@
 #import "SettingsScene.h"
 #import "CreditsScene.h"
 #import "InstructScene.h"
+#import "AchieveScene.h"
 
 #define kSimpleTableViewRowHeight 24
 #define kSimpleTableViewInset 50
@@ -35,6 +35,7 @@
     NSString *difficultyString;
     NSArray *localArray;
     NSArray *onlineArray;
+    NSArray *currentScores;
 }
 +(CCScene *) scene
 {
@@ -96,13 +97,13 @@
         [self addChild:settingBG];
         
         //Add Quit Button
-        CCButton *quitButton = [CCButton buttonWithTitle:@"Quit" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button-bg.png"]];
-        quitButton.label.fontSize = fontSize;
-        quitButton.preferredSize = CGSizeMake(quitButton.contentSize.width *1.25, quitButton.contentSize.height);
-        quitButton.positionType = CCPositionTypeNormalized;
-        quitButton.position = ccp(0.50f, 0.10f);
-        [quitButton setTarget:self selector:@selector(onQuitClicked:)];
-        [self addChild:quitButton];
+        CCButton *backButton = [CCButton buttonWithTitle:@"Back" spriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:@"button-bg.png"]];
+        backButton.label.fontSize = fontSize;
+        backButton.preferredSize = CGSizeMake(backButton.contentSize.width *1.25, backButton.contentSize.height);
+        backButton.positionType = CCPositionTypeNormalized;
+        backButton.position = ccp(0.50f, 0.10f);
+        [backButton setTarget:self selector:@selector(onBackClicked:)];
+        [self addChild:backButton];
         
         //Add label for Login Title
         CCLabelTTF *loginLabel = [CCLabelTTF labelWithString:@"Login" fontName:@"Verdana-Bold" fontSize:fontSize * 1.5];
@@ -257,6 +258,9 @@
         leaderboardTable.position = ccp(0.70f, 0.50f);
         [leaderboardTable setBounces:NO];
         [leaderboardTable setHorizontalScrollEnabled:NO];
+        leaderboardTable.block = ^(CCTableView *table){
+            [self openAchieveScene:[table selectedRow]];
+        };
         [self addChild:leaderboardTable];
     }
     return self;
@@ -292,6 +296,8 @@
     tempArray = [tempArray sortedArrayUsingDescriptors:sortDescriptor];
     
     NSDictionary *tempDict = [tempArray objectAtIndex:index];
+    
+    currentScores = tempArray;
     
     CCTableViewCell *cell = [CCTableViewCell node];
     cell.contentSizeType = CCSizeTypeMake(CCSizeUnitNormalized, CCSizeUnitPoints);
@@ -372,9 +378,19 @@
     
 }
 
+//Go to Achievements Scene
+-(void)openAchieveScene:(int)row
+{
+    NSDictionary *tempDict = [currentScores objectAtIndex:row];
+    NSLog(@"%@", [tempDict objectForKey:@"User"]);
+    if(![[tempDict objectForKey:@"User"] isEqualToString:@"Unknown"]){
+        [[CCDirector sharedDirector] pushScene:[AchieveScene scene:[tempDict objectForKey:@"User"]]];
+    }
+    
+}
 
 //Back to Main Menu
--(void)onQuitClicked:(id)sender
+-(void)onBackClicked:(id)sender
 {
     [[CCDirector sharedDirector] popScene];
 }

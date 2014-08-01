@@ -50,6 +50,9 @@
     int gapSize;
     int pegCount;
     BOOL bonusRound;
+    BOOL quickAchieve;
+    BOOL totAchieve;
+    int maxCombo;
 }
 
 // -----------------------------------------------------------------------
@@ -200,6 +203,7 @@
     //Set Pegs Animation and Bonus Round to false
     [self setPegAnimate];
     bonusRound = false;
+    
     //Set Multiplier and Points
     multiplier = 1;
     if([difficultyString isEqualToString:@"Hard"]){
@@ -207,6 +211,14 @@
     }else{
         point = 75;
     }
+    
+    //Set Variables for Achievements
+    totAchieve = true;
+    maxCombo = 0;
+
+    //Set Timer for Achievements
+    [self performSelector:@selector(checkBonus) withObject:nil afterDelay:30.0f];
+    [self performSelector:@selector(checkLife) withObject:nil afterDelay:60.0f];
     
     // done
 	return self;
@@ -234,7 +246,7 @@
             [self schedule:@selector(addPumpkin) interval:4.25f];
         }else
             [self schedule:@selector(addGems) interval:2.5f];
-        [self schedule:@selector(addPumpkin) interval:6.35f];
+            [self schedule:@selector(addPumpkin) interval:6.35f];
         }
     // In pre-v3, touch enable and scheduleUpdate was called here
     // In v3, touch is enabled by setting userInterActionEnabled for the individual nodes
@@ -392,9 +404,6 @@
         multiplierString = @"";
     }
     [scoreLabel setString:[NSString stringWithFormat:@"Score: %d %@", score, multiplierString]];
-    if (score > 8000) {
-        [[CCDirector sharedDirector] replaceScene:[GameOverScene scene:@"win" withScore:[NSString stringWithFormat:@"Score: %d", score]]];
-    }
 }
 
 //Set Multiplier
@@ -409,6 +418,9 @@
         //Add Orb for Bonus Round
         [self addOrb];
         [self showBonus:@"Get the Orb" textSize:fontSize * 2];
+    }
+    if(count < maxCombo){
+        maxCombo = count;
     }
 }
 
@@ -427,9 +439,10 @@
     [self removeChild:[livesArray lastObject] cleanup:YES];
     [livesArray removeLastObject];
     
-    //End Game
-    if(lives == 3){
-        [[CCDirector sharedDirector] replaceScene:[GameOverScene scene:@"lose" withScore:[NSString stringWithFormat:@"%d", score]]];
+    //End Game and Save Achievements
+    if(lives == 0){
+        [self setAchievements];
+        [[CCDirector sharedDirector] replaceScene:[GameOverScene scene:[NSString stringWithFormat:@"%d", score]]];
     }
 }
 
@@ -585,6 +598,62 @@
     [self runAction:pegsSeq];
     //Add Points Bonus
     point = point * 2;
+}
+
+//Check if Bonus Round Triggered in 30 seconds
+-(void)checkBonus
+{
+    if(bonusRound == true){
+        quickAchieve = true;
+    }else{
+        quickAchieve = false;
+    }
+}
+
+//Check if Survived Past 1 minute
+-(void)checkLife
+{
+    if(totAchieve == true){
+        totAchieve = false;
+    }
+}
+
+//Set Achievements for Current User
+-(void)setAchievements
+{
+    PFUser * current = [PFUser currentUser];
+    if(current != nil){
+        NSDictionary *achievements = [current[@"Achievments"] mutableCopy];
+        if(achievements == nil){
+            achievements = [[NSMutableDictionary alloc] init];
+        }
+        if(quickAchieve == true){
+            [achievements setValue:@"true" forKey:@"Quick Draw"];
+        }
+        if(totAchieve == true){
+            [achievements setValue:@"true" forKey:@"Trick-or-Treat"];
+        }
+        if(maxCombo > 5){
+            [achievements setValue:[NSNumber numberWithInt:maxCombo] forKey:@"Gems"];
+        }
+        if(bonusRound == true){
+            int *orbs = [[achievements objectForKey:@"Orbs"] intValue];
+            if(orbs > 0){
+                orbs++;
+            }else{
+                orbs = 1;
+            }
+            NSNumber *orbsNumber = [NSNumber numberWithInt:orbs];
+            [achievements setValue:orbsNumber forKey:@"Orbs"];
+        }
+        if(score > 10000){
+            if([[achievements objectForKey:@"Score"] intValue] < score){
+                [achievements setValue: [NSNumber numberWithInt:score] forKey:@"Score"];
+            }
+        }
+        current[@"Achievments"] = achievements;
+        [current save];
+    }
 }
 
 // -----------------------------------------------------------------------

@@ -10,6 +10,7 @@
 #import "HelloWorldScene.h"
 #import "IntroScene.h"
 #import "SettingsScene.h"
+#import "AchieveScene.h"
 #import <Accounts/Accounts.h>
 #import <Social/Social.h>
 
@@ -30,14 +31,14 @@
     NSString *difficultyString;
     NSArray *localArray;
     NSArray *onlineArray;
+    NSArray *currentScores;
 }
-@synthesize score, condition;
-+(CCScene *) scene:(NSString *) conditionString  withScore:(NSString*) scoreString
+@synthesize score;
++(CCScene *) scene:(NSString*) scoreString
 {
     CCScene *scene = [CCScene node];
     GameOverScene *overLayer = [GameOverScene node];
     [overLayer setScore:scoreString];
-    [overLayer setCondition:conditionString];
     [overLayer displayConditions];
     [scene addChild: overLayer];
     return scene;
@@ -151,6 +152,9 @@
         leaderboardTable.position = ccp(0.50f, 0.55f);
         [leaderboardTable setBounces:NO];
         [leaderboardTable setHorizontalScrollEnabled:NO];
+        leaderboardTable.block = ^(CCTableView *table){
+            [self openAchieveScene:[table selectedRow]];
+        };
         [self addChild:leaderboardTable];
 
         //Add label for Region Slider
@@ -228,6 +232,8 @@
     tempArray = [tempArray sortedArrayUsingDescriptors:sortDescriptor];
     
     NSDictionary *tempDict = [tempArray objectAtIndex:index];
+    
+    currentScores = tempArray;
     
     CCTableViewCell *cell = [CCTableViewCell node];
     cell.contentSizeType = CCSizeTypeMake(CCSizeUnitNormalized, CCSizeUnitPoints);
@@ -314,6 +320,17 @@
         NSLog(@"%@", [regionArray objectAtIndex:regionInt]);
         NSLog(@"%@", [onlineArray description]);
     } ];
+    
+}
+
+//Go to Achievements Scene
+-(void)openAchieveScene:(int)row
+{
+    NSDictionary *tempDict = [currentScores objectAtIndex:row];
+    NSLog(@"%@", [tempDict objectForKey:@"User"]);
+    if(![[tempDict objectForKey:@"User"] isEqualToString:@"Unknown"]){
+        [[CCDirector sharedDirector] pushScene:[AchieveScene scene:[tempDict objectForKey:@"User"]]];
+    }
     
 }
 

@@ -15,7 +15,6 @@
     
 }
 @property (nonatomic, strong)NSString *score;
-@property (nonatomic, strong)NSString *condition;
-+(CCScene *) scene:(NSString *) condition  withScore:(NSString*) score;
++(CCScene *) scene:(NSString*) score;
 -(id) init;
 @end

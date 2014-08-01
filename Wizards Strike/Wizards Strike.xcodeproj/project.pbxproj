@@ -243,6 +243,7 @@
 		CB938E16193FC62900CEBD0A /* poofSFX.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CB938E08193FC62900CEBD0A /* poofSFX.mp3 */; };
 		CB938E18193FC62900CEBD0A /* pumpkinSFX.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = CB938E0A193FC62900CEBD0A /* pumpkinSFX.mp3 */; };
 		CB9CB608195BA6D90027AAB0 /* CreditsScene.m in Sources */ = {isa = PBXBuildFile; fileRef = CB9CB607195BA6D90027AAB0 /* CreditsScene.m */; };
+		CBE51AB5198731E20088156E /* AchieveScene.m in Sources */ = {isa = PBXBuildFile; fileRef = CBE51AB4198731E20088156E /* AchieveScene.m */; };
 		CBEFB53A197F0213008BC3BD /* settings_sheet.png in Resources */ = {isa = PBXBuildFile; fileRef = CBEFB536197F0213008BC3BD /* settings_sheet.png */; };
 		CBEFB53B197F0213008BC3BD /* settings_sheet@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CBEFB537197F0213008BC3BD /* settings_sheet@2x.png */; };
 		CBEFB53C197F0213008BC3BD /* settings_sheet.plist in Resources */ = {isa = PBXBuildFile; fileRef = CBEFB538197F0213008BC3BD /* settings_sheet.plist */; };
@@ -728,6 +729,8 @@
 		CB938E0A193FC62900CEBD0A /* pumpkinSFX.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = pumpkinSFX.mp3; path = Resources/pumpkinSFX.mp3; sourceTree = "<group>"; };
 		CB9CB606195BA6D90027AAB0 /* CreditsScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreditsScene.h; sourceTree = "<group>"; };
 		CB9CB607195BA6D90027AAB0 /* CreditsScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreditsScene.m; sourceTree = "<group>"; };
+		CBE51AB3198731E20088156E /* AchieveScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AchieveScene.h; sourceTree = "<group>"; };
+		CBE51AB4198731E20088156E /* AchieveScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AchieveScene.m; sourceTree = "<group>"; };
 		CBEFB536197F0213008BC3BD /* settings_sheet.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = settings_sheet.png; path = Resources/settings_sheet.png; sourceTree = "<group>"; };
 		CBEFB537197F0213008BC3BD /* settings_sheet@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "settings_sheet@2x.png"; path = "Resources/settings_sheet@2x.png"; sourceTree = "<group>"; };
 		CBEFB538197F0213008BC3BD /* settings_sheet.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = settings_sheet.plist; path = Resources/settings_sheet.plist; sourceTree = "<group>"; };
@@ -1683,6 +1686,8 @@
 				CB643917195BB6240098947C /* InstructScene.m */,
 				CB18357B197D8F3E00A4E76E /* SettingsScene.h */,
 				CB18357C197D8F3E00A4E76E /* SettingsScene.m */,
+				CBE51AB3198731E20088156E /* AchieveScene.h */,
+				CBE51AB4198731E20088156E /* AchieveScene.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -1953,6 +1958,7 @@
 				CB938C4E193FBC4900CEBD0A /* CCTexture.m in Sources */,
 				CB938CE0193FBC4A00CEBD0A /* ALCaptureDevice.m in Sources */,
 				CB938C1C193FBC4900CEBD0A /* CCResponderManager.m in Sources */,
+				CBE51AB5198731E20088156E /* AchieveScene.m in Sources */,
 				CB938BB4193FBC4800CEBD0A /* CCConfiguration.m in Sources */,
 				CB643918195BB6240098947C /* InstructScene.m in Sources */,
 				CB938CF7193FBC4A00CEBD0A /* ALWrapper.m in Sources */,
